@@ -36,6 +36,10 @@ jobs:
           python3 -m pip install --user buildozer cython
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
+      - name: Accept Android SDK licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
       - name: Show environment (debug)
         run: |
           python3 --version
@@ -47,11 +51,11 @@ jobs:
 
       - name: Build debug APK
         run: |
-          ls -la  
+          ls -la
           buildozer -v android debug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: bin/*.apk 
+          path: bin/*.apk
