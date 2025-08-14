@@ -55,6 +55,8 @@ jobs:
 
       - name: Build debug APK
         run: |
+          export ANDROIDSDK=$ANDROID_HOME
+          export ANDROIDNDK=$ANDROID_HOME/ndk-bundle
           ls -la
           buildozer -v android debug
 
@@ -63,3 +65,4 @@ jobs:
         with:
           name: android-apk
           path: bin/*.apk
+
