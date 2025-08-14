@@ -20,6 +20,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Set JAVA_HOME for Buildozer
+        run: echo "JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.16-8/x64" >> $GITHUB_ENV
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -38,20 +41,18 @@ jobs:
           python3 --version
           pip3 --version
           java -version
+          echo $JAVA_HOME
           which buildozer || true
           ls -la
 
       - name: Build debug APK
         run: |
+          cd DailyVerbsApp   # <-- غيّرها لاسم مجلد مشروعك
           ls -la
           buildozer -v android debug
-        env:
-          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: bin/*.apk
-
-
+          path: DailyVerbsApp/bin/*.apk   # <-- غيّرها إذا غيّرت اسم المجلد
