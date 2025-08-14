@@ -20,9 +20,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set JAVA_HOME for Buildozer
-        run: echo "JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.16-8/x64" >> $GITHUB_ENV
-
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -30,34 +27,36 @@ jobs:
             build-essential ccache git zip unzip autoconf automake libtool pkg-config \
             python3-pip python3-dev zlib1g-dev libncurses5-dev libtinfo6 libffi-dev libssl-dev
 
-      - name: Install Python packages (buildozer + cython)
+      - name: Install Python packages
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install --user buildozer cython
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
+      - name: Install Android cmdline-tools
+        run: |
+          mkdir -p "$ANDROID_HOME/cmdline-tools"
+          cd "$ANDROID_HOME/cmdline-tools"
+          wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
+          mkdir -p latest
+          unzip cmdtools.zip -d latest
+          rm cmdtools.zip
+
       - name: Accept Android SDK licenses
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
-      - name: Install required build-tools
+      - name: Install required Android packages
         run: |
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;36.0.0" "platform-tools" "platforms;android-33"
-
-      - name: Show environment (debug)
-        run: |
-          python3 --version
-          pip3 --version
-          java -version
-          echo $JAVA_HOME
-          which buildozer || true
-          ls -la
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+            "platform-tools" \
+            "platforms;android-33" \
+            "build-tools;36.0.0"
 
       - name: Build debug APK
         run: |
           export ANDROIDSDK=$ANDROID_HOME
           export ANDROIDNDK=$ANDROID_HOME/ndk-bundle
-          ls -la
           buildozer -v android debug
 
       - name: Upload APK artifact
@@ -65,4 +64,5 @@ jobs:
         with:
           name: android-apk
           path: bin/*.apk
+
 
