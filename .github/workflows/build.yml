@@ -43,6 +43,7 @@ jobs:
 
       - name: Build debug APK
         run: |
+          cd DailyVerbsApp   # <-- غيرها لاسم مجلدك الذي فيه buildozer.spec و main.py
           ls -la
           buildozer -v android debug
         env:
@@ -52,4 +53,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: bin/*.apk
+          path: DailyVerbsApp/bin/*.apk   # <-- نفس اسم المجلد هنا
+
