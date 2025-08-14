@@ -47,11 +47,11 @@ jobs:
 
       - name: Build debug APK
         run: |
-          ls -la   # optional, للتأكد من وجود main.py و buildozer.spec
+          ls -la  
           buildozer -v android debug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: bin/*.apk   # مجلد bin موجود مباشرة بعد تشغيل buildozer
+          path: bin/*.apk 
