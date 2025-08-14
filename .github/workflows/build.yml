@@ -1,46 +1,23 @@
-name: Build APK
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip git zip unzip openjdk-17-jdk
-          pip install buildozer cython
-
       - name: Prepare Android SDK for Buildozer
         run: |
           SDK_PATH="$HOME/.buildozer/android/platform/android-sdk"
           mkdir -p "$SDK_PATH/cmdline-tools"
           cd "$SDK_PATH/cmdline-tools"
+          
+          # تحميل أدوات الأندرويد
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
-          mkdir -p latest
-          unzip cmdtools.zip -d latest
+          unzip cmdtools.zip -d temp
           rm cmdtools.zip
-
-          yes | $SDK_PATH/cmdline-tools/latest/bin/sdkmanager --licenses
-          $SDK_PATH/cmdline-tools/latest/bin/sdkmanager \
+          
+          # نقل الملفات للمكان الصحيح
+          mv temp/cmdline-tools latest
+          rm -rf temp
+          
+          # قبول الرخص وتثبيت الحزم
+          yes | "$SDK_PATH/cmdline-tools/latest/bin/sdkmanager" --licenses
+          "$SDK_PATH/cmdline-tools/latest/bin/sdkmanager" \
             "platform-tools" \
             "platforms;android-33" \
             "build-tools;36.0.0"
-
-      - name: Build APK
-        run: buildozer -v android debug
 
 
