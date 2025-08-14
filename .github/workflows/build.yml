@@ -47,12 +47,11 @@ jobs:
 
       - name: Build debug APK
         run: |
-          cd DailyVerbsApp   # <-- غيّرها لاسم مجلد مشروعك
-          ls -la
+          ls -la   # optional, للتأكد من وجود main.py و buildozer.spec
           buildozer -v android debug
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: DailyVerbsApp/bin/*.apk   # <-- غيّرها إذا غيّرت اسم المجلد
+          path: bin/*.apk   # مجلد bin موجود مباشرة بعد تشغيل buildozer
